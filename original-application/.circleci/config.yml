@@ -10,6 +10,13 @@ workflows:
       - test:
           requires:
             - request-testing
+      - deploy-heroku:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
 
 version: 2
 jobs:
@@ -25,7 +32,7 @@ jobs:
           name: setup heroku cli
           command: |
             chmod +x scripts/setup_herokucli.sh && scripts/setup_herokucli.sh
-      
+
       - run:
           name: configure deps
           command: |
@@ -39,15 +46,15 @@ jobs:
             pytest tests.py --junitxml=test-reports/junit.xml
 
       - store_test_results:
-          path: /home/circleci/projectName/webapp/test-reports/junit.xml
+          path: /home/circleci/projectName/webapp/test-reports
 
       - store_artifacts:
-          path: /home/circleci/projectName/webapp/test-reports/junit.xml
+          path: /home/circleci/projectName/webapp/test-reports
 
 
 
-      - run: docker build -t registry.heroku.com/blooming-journey-39189/web:${CIRCLE_SHA1} .
-      - run: docker push registry.heroku.com/blooming-journey-39189/web:${CIRCLE_SHA1}
+      - run: docker build -t registry.heroku.com/circleci-demo-ag/web:${CIRCLE_SHA1} .
+      - run: docker push registry.heroku.com/circleci-demo-ag/web:${CIRCLE_SHA1}
 
   test:
     working_directory: ~/projectName
@@ -58,7 +65,7 @@ jobs:
       - checkout
 
       - run: chmod +x scripts/setup_herokucli.sh && scripts/setup_herokucli.sh
-      - run: docker pull registry.heroku.com/blooming-journey-39189/web:${CIRCLE_SHA1}
+      - run: docker pull registry.heroku.com/circleci-demo-ag/web:${CIRCLE_SHA1}
 
   deploy-heroku:
     working_directory: ~/projectName
