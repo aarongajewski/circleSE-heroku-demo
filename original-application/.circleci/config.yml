@@ -13,6 +13,7 @@ workflows:
       - deploy-heroku:
           requires:
             - test
+          context: ChatOps
           filters:
             branches:
               only:
