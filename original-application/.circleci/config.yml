@@ -18,7 +18,9 @@ workflows:
               only:
                 - master
 
-version: 2
+version: 2.1
+orbs:
+  slack: circleci/slack@2.0.0
 jobs:
   build:
     working_directory: ~/projectName
@@ -51,8 +53,6 @@ jobs:
       - store_artifacts:
           path: /home/circleci/projectName/webapp/test-reports
 
-
-
       - run: docker build -t registry.heroku.com/circleci-demo-ag/web:${CIRCLE_SHA1} .
       - run: docker push registry.heroku.com/circleci-demo-ag/web:${CIRCLE_SHA1}
 
@@ -76,3 +76,6 @@ jobs:
       - checkout
       - run: chmod +x scripts/setup_herokucli.sh && scripts/setup_herokucli.sh
       - run: chmod +x scripts/deploy.sh && scripts/deploy.sh
+      - slack/status:
+          mentions: 'aaron'
+          webhook: ${SLACK_WEBHOOK}
