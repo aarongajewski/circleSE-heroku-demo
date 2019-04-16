@@ -3,16 +3,20 @@ workflows:
   build-test-&-deploy:
     jobs:
       - build
-      - request-testing:
-          type: approval
-          requires:
-            - build
       - test:
           requires:
-            - request-testing
-      - deploy-heroku:
+            - build
+      - deployment-gate:
+          type: approval
           requires:
             - test
+          filters:
+            branches:
+              only:
+                - master            
+      - deploy-heroku:
+          requires:
+            - deployment-gate
           context: chatops
           filters:
             branches:
