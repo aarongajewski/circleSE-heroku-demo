@@ -13,7 +13,7 @@ workflows:
           filters:
             branches:
               only:
-                - master            
+                - master
       - deploy-heroku:
           requires:
             - deployment-gate
@@ -43,6 +43,7 @@ jobs:
       - run:
           name: configure deps
           command: |
+            pip install --upgrade pip
             pip install flask && pip install pytest
 
       - run:
